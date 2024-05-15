@@ -1,8 +1,7 @@
 #!/usr/bin/python
 
 import os
-# import platform
-# from enum import Enum
+from typing import List, Tuple
 
 class ProjectContent:
     def __init__(self, project_name: str):
@@ -219,16 +218,27 @@ def main() -> None:
     
     os.makedirs(project_name, exist_ok=True)
 
-    write_file(os.path.join(project_name, "main.cpp"), project_content.main_cpp_content)
-    write_file(os.path.join(project_name, ".clang-format"), project_content.clang_format_conten)
-    write_file(os.path.join(project_name, ".gitignore"), project_content.git_ignore_content)
-    write_file(os.path.join(project_name, "CMakeLists.txt"), project_content.Cmake_list_root)    
-    
+    # List of file paths to create in root dir
+    file_paths: List[Tuple[str, str]] = [
+        (os.path.join(project_name, "main.cpp"), project_content.main_cpp_content),
+        (os.path.join(project_name, ".clang-format"), project_content.clang_format_conten),
+        (os.path.join(project_name, ".gitignore"), project_content.git_ignore_content),
+        (os.path.join(project_name, "CMakeLists.txt"), project_content.Cmake_list_root)
+    ]
+
+    for file_path, content in file_paths:
+        write_file(file_path, content)
             
-    os.makedirs(os.path.join(project_name, "build"), exist_ok=True)
-    os.makedirs(os.path.join(project_name, "src"), exist_ok=True)
-    os.makedirs(os.path.join(project_name, "include"), exist_ok=True)
-    os.makedirs(os.path.join(project_name, "tests"), exist_ok=True)
+    # List of directories to create
+    directories: List[str] = [
+        os.path.join(project_name, "build"),
+        os.path.join(project_name, "src"),
+        os.path.join(project_name, "include"),
+        os.path.join(project_name, "tests")
+    ]
+    
+    for directory in directories:
+        os.makedirs(directory, exist_ok=True)
     
     write_file(os.path.join(project_name, "src",  f'{project_name}.cpp'), project_content.src_file_content)
     write_file(os.path.join(project_name, "include",  f'{project_name}.h'), project_content.header_file_content)
