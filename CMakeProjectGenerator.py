@@ -3,6 +3,7 @@
 import os
 from typing import List
 from typing import Dict
+import sys
 
 
 class ProjectContent:
@@ -210,20 +211,28 @@ def write_file(file_path: str, content: str = "") -> None:
     with open(file_path, "w") as fs:
         fs.write(content)
 
-def main() -> None:
-    print("Please enter project name:")
-    project_name: str = input()
+def main(argv: list[str]) -> None:
+    argc: int = len(argv)
+    project_name: str = ""
+    
+    if argc != 2:
+        print("Please enter project name:")
+        project_name = input()
+    else:
+        project_name = argv[1]
+    
 
+        
     project_content = ProjectContent(project_name)
     
     os.makedirs(project_name)
 
     # Dictionary of file paths and contents to be written
     root_files: Dict[str, str] = {
-        os.path.join(project_name, "main.cpp"): project_content.main_cpp_content,
-        os.path.join(project_name, ".clang-format"): project_content.clang_format_conten,
-        os.path.join(project_name, ".gitignore"): project_content.git_ignore_content,
-        os.path.join(project_name, "CMakeLists.txt"): project_content.Cmake_list_root
+        os.path.join(project_name, "main.cpp"): project_content.main_cpp_content,          # root main
+        os.path.join(project_name, ".clang-format"): project_content.clang_format_conten,  # root clang-format
+        os.path.join(project_name, ".gitignore"): project_content.git_ignore_content,      # root .gitignore
+        os.path.join(project_name, "CMakeLists.txt"): project_content.Cmake_list_root      # root CMakeLists
     }
 
     for file_path, content in root_files.items():
@@ -242,10 +251,10 @@ def main() -> None:
     
     # Dictionary of additional files to be created
     additional_files: Dict[str, str] = {
-        os.path.join(project_name, "src",  f'{project_name}.cpp'): project_content.src_file_content,
-        os.path.join(project_name, "include",  f'{project_name}.h'): project_content.header_file_content,
-        os.path.join(project_name,  "tests", f'{project_name}_test.cpp'): project_content.test_file_content,
-        os.path.join(project_name,  "tests", "CMakeLists.txt"): project_content.Cmake_list_test_content
+        os.path.join(project_name, "src",  f'{project_name}.cpp'): project_content.src_file_content,         # src/ dir c++ file
+        os.path.join(project_name, "include",  f'{project_name}.h'): project_content.header_file_content,    # include/ dir header file
+        os.path.join(project_name,  "tests", f'{project_name}_test.cpp'): project_content.test_file_content, # test/ dir test.cpp file
+        os.path.join(project_name,  "tests", "CMakeLists.txt"): project_content.Cmake_list_test_content      # test/ dir CMakeLists
     
     }    
     
@@ -253,4 +262,4 @@ def main() -> None:
         write_file(file_path, content)
     
 if __name__ == '__main__':
-    main()
+    main(sys.argv)
