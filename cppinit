@@ -55,7 +55,47 @@ compile_commands.json
 .clang-format
 .vscode
 .cache
-        """
+
+# Prerequisites
+*.d
+
+# C++ objects and libs
+*.slo
+*.lo
+*.o
+*.a
+*.la
+*.lai
+*.so
+*.so.*
+*.dll
+*.dylib
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+"""
 
     #________________________________-.CMakeLists.txt__root-________________________________#
         self.cmake_list_root: str = f"""
@@ -101,7 +141,7 @@ target_compile_options("{self.project_name}" PRIVATE
     -fno-omit-frame-pointer
 )
 
-target_link_options("{self.project_name}" PRIVATE 
+target_link_options("{self.project_name}" PRIVATE
     -fsanitize=address
     -fsanitize=undefined
 )
