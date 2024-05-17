@@ -56,7 +56,7 @@ MyProject
 
 ## Adding to PATH
 
-The add_to_path.py script copies script(for example cppinit) to the ~/scripts directory and adds this directory to your PATH environment variable, so you can execute the script from anywhere in the terminal.
+The add_to_path.py script copies `script`(for example cppinit) to the ~/scripts directory and adds this directory to your PATH environment variable, so you can execute the script from anywhere in the terminal.
 
 ### Steps
 
