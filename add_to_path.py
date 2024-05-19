@@ -6,14 +6,17 @@ import os
 import shutil
 import stat
 
-def copy_script_to_scripts(file_name: str) -> str:
-    # Define source and destination paths
-    source_path: str = os.path.join( os.path.dirname(os.path.realpath(__file__)), file_name)
+def copy_script_to_scripts(file_path: str) -> str:
+    # Define destination directory
     dest_dir: str = os.path.expanduser("~/scripts")
 
     # Create destination directory if it doesn't exist
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir)
+
+    # Get the absolute path of the file to be copied
+    source_path: str = os.path.abspath(file_path)
+    file_name: str = os.path.basename(file_path)
 
     # Copy the script to the destination directory
     dest_path: str = os.path.join(dest_dir, file_name)
@@ -29,7 +32,7 @@ def copy_script_to_scripts(file_name: str) -> str:
 def add_to_path(scripts_path: str) -> None:
     # Get the home directory
     home_dir: str = os.path.expanduser("~")
-    
+
     # Check if the ~/.zshrc or ~/.bashrc exists
     rc_file: str = os.path.join(home_dir, ".zshrc")
     if not os.path.exists(rc_file):
@@ -44,7 +47,7 @@ def add_to_path(scripts_path: str) -> None:
     # Read the content of the rc file to check if the path already exists
     with open(rc_file, "r", encoding="utf-8") as file:
         rc_file_content: List[str] = file.readlines()
-
+        
     path_exists: bool = any(f"export PATH=\"{scripts_path}:$PATH\"" in line for line in rc_file_content)
 
     if not path_exists:
@@ -61,17 +64,27 @@ def add_to_path(scripts_path: str) -> None:
 
 def main(argv: List[str]) -> None:
     argc: int = len(argv)
-    file_name: str = ""
+    file_path: str = ""
 
     if argc != 2:
-        print("Enter file name:")
-        file_name = input()
+        print("Enter file path:")
+        file_path = input()
     else:
-        file_name = argv[1]
+        file_path = argv[1]
 
-    dest_path: str = copy_script_to_scripts(file_name)
+    if not os.path.isfile(file_path):
+        print(f"Error: The file '{file_path}' does not exist.")
+        sys.exit(1)
+
+    dest_path: str = copy_script_to_scripts(file_path)
     scripts_path: str = os.path.dirname(dest_path)
     add_to_path(scripts_path)
+
+    # Check if this script is named 'add_to_path.py' and if it's the first run
+    script_name = 'add_to_path.py'
+    current_script_path = os.path.abspath(__file__)
+    if not os.path.exists(os.path.join(os.path.expanduser("~/scripts"), script_name)):
+        copy_script_to_scripts(current_script_path)
 
 if __name__ == '__main__':
     main(sys.argv)

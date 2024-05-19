@@ -16,7 +16,7 @@ class ProjectContent:
 
 int main()
 {{
-    my::A a{{}};
+    my::{self.project_name} a{{}};
     std::cout << "YES " << a.p << std::endl;
     return 0;
 }}
@@ -28,9 +28,9 @@ int main()
 #define {self.project_name.upper()}_INCLUDE_{self.project_name.upper()}_H
 
 namespace my {{
-    class A {{
+    class {self.project_name} {{
     public:
-    A();
+    {self.project_name}();
 
     int p;
     }};
@@ -44,7 +44,7 @@ namespace my {{
 #include "../include/{self.project_name}.h"
 
 namespace my {{
-    A::A() : p(42) {{}}
+    {self.project_name}::{self.project_name}() : p(42) {{}}
 }} // namespace my
         """
 
@@ -248,7 +248,7 @@ PenaltyBreakOpenParenthesis: 1
         """
 
 def write_file(file_path: str, content: str = "") -> None:
-    with open(file_path, "w", encoding="ytf-8") as file:
+    with open(file_path, "w", encoding="utf-8") as file:
         file.write(content)
 
 def main(argv: list[str]) -> None:
