@@ -56,26 +56,25 @@ MyProject
 
 ## Adding to PATH
 
-The `add_to_path.py` script copies a specified script (for example cppinit) to the ~/scripts directory and adds this directory to your PATH environment variable, so you can execute the script from anywhere in the terminal.
+The `add_to_path.py` script copies a specified script (for example cppinit) to the ~/scripts directory and adds this directory to your PATH environment variable, so you can execute the script from anywhere in the terminal. 
+If this is the first run, the add_to_path.py script will also copy itself to the ~/scripts directory, removing the .py extension.
 
 ### Steps
 
+if is first run
 1. Ensure both scripts are in the same directory.
 2. Run the add_to_path.py script with the name of the script you want to copy:
 
 ```bash
-./add_to_path.py <script name>
+./add_to_path.py cppinit
 
 # or
 
-python add_to_path.py <script name>
+python add_to_path.py cppinit
 ```
-
-If this is the first run, the add_to_path.py script will also copy itself to the ~/scripts directory, removing the .py extension.
-
 This script will:
 
-- Copy `script name` to ~/scripts.
+- Copy `cppinit` to ~/scripts.
 - Check if ~/scripts is already in your PATH and add it to your .bashrc or .zshrc file if it is not.
 - Instruct you to source your shell configuration file to update the PATH in the current session.
 
