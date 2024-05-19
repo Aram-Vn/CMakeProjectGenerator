@@ -6,17 +6,19 @@ import os
 import shutil
 import stat
 
-def copy_script_to_scripts(file_path: str) -> str:
-    # Define destination directory
+def copy_script_to_scripts(file_path: str, rename: bool = False) -> str:
     dest_dir: str = os.path.expanduser("~/scripts")
 
     # Create destination directory if it doesn't exist
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir)
 
-    # Get the absolute path of the file to be copied
     source_path: str = os.path.abspath(file_path)
     file_name: str = os.path.basename(file_path)
+    
+    # If rename is True, remove the .py extension
+    if rename:
+        file_name = file_name[:-3]
 
     # Copy the script to the destination directory
     dest_path: str = os.path.join(dest_dir, file_name)
@@ -83,8 +85,8 @@ def main(argv: List[str]) -> None:
     # Check if this script is named 'add_to_path.py' and if it's the first run
     script_name = 'add_to_path.py'
     current_script_path = os.path.abspath(__file__)
-    if not os.path.exists(os.path.join(os.path.expanduser("~/scripts"), script_name)):
-        copy_script_to_scripts(current_script_path)
+    if not os.path.exists(os.path.join(os.path.expanduser("~/scripts"), script_name[:-3])):
+        copy_script_to_scripts(current_script_path, rename=True)
 
 if __name__ == '__main__':
     main(sys.argv)
