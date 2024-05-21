@@ -17,7 +17,7 @@ def copy_script_to_scripts(file_path: str, rename: bool = False) -> str:
     file_name: str = os.path.basename(file_path)
     
     # If rename is True, remove the .py extension
-    if rename:
+    if rename and (file_name.endswith(".py") or file_name.endswith(".sh")):
         file_name = file_name[:-3]
 
     # Copy the script to the destination directory
