@@ -16,7 +16,7 @@ The CMake Project Generator is a Python script that automates the setup of C++ p
 
 ## Scripts
 
-- [cppinit](#usage): Generates the necessary files and directory structure for a new C++ project.
+- [cppinit](#usage-of-cppinit): Generates the necessary files and directory structure for a new C++ project.
 - [add_to_path.py](#adding-to-path): Copies the CMakeProjectGenerator.py script to a ~/scripts directory and updates your PATH environment variable to include this directory, allowing you to run the script from anywhere.
 
 ## Dependencies
