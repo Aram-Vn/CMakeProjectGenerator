@@ -99,6 +99,7 @@ If this is the first run, the add_to_path.py script will also copy itself to the
 ### Steps
 
 if is first run
+
 1. Ensure both scripts are in the same directory.
 2. Run the add_to_path.py script with the name of the script you want to copy:
 
@@ -109,6 +110,7 @@ if is first run
 
 python add_to_path.py cppinit
 ```
+
 This script will:
 
 - Copy `cppinit` to ~/scripts.
@@ -122,6 +124,7 @@ cppinit <project_name>
 ```
 
 ## Using add_to_path.py After the First Run
+
 After the first run, the `add_to_path.py` script is copied to the ~/scripts directory without the .py extension, allowing you to call it from anywhere:
 
 ```bash
