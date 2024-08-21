@@ -2,6 +2,18 @@
 
 The CMake Project Generator is a Python script that automates the setup of C++ projects with CMake, providing a consistent project structure and basic configuration files.
 
+- [Scripts](#scripts)
+- [Dependencies](#dependencies)
+- [Features](#features)
+- [Usage of cppinit](#usage-of-cppinit)
+  - [With Project Name Argument](#with-project-name-argument)
+  - [Without Project Name Argument](#without-project-name-argument)
+  - [Example](#example)
+- [Usage Adding to PATH](#adding-to-path)
+  - [Steps](#steps)
+  - [Using add_to_path.py After the First Run](#using-add_to_pathpy-after-the-first-run)
+
+
 ## Scripts
 
 - [cppinit](#usage): Generates the necessary files and directory structure for a new C++ project.
@@ -17,7 +29,7 @@ The CMake Project Generator is a Python script that automates the setup of C++ p
 - reates a main.cpp file, a header file, and a source file.
 - Configures .gitignore and .clang-format files for Git and code formatting.
 
-## Usage
+## Usage of cppinit
 
 ### With Project Name Argument
 
@@ -51,7 +63,32 @@ You will then be prompted to enter the project name manually. After providing th
 ```bash
 ./cppinit
 Please enter project name:
-MyProject
+<project_name>
+```
+
+Result Structure
+
+```bash
+<project_name>/
+├── main.cpp
+│
+├── .clang-format
+│
+├── .gitignore
+│
+├── CMakeLists.txt
+│
+├── build/
+│
+├── include/
+│   └── <project_name>.h
+│
+├── src/
+│   └── <project_name>.cpp
+│
+└── tests/
+    ├── <project_name>_test.cpp
+    └── CMakeLists.txt
 ```
 
 ## Adding to PATH
@@ -95,29 +132,4 @@ For example, to copy another script from any directory named `new_script` to the
 
 ```bash
 add_to_path new_script
-```
-
-## Result Structure
-
-```bash
-<project_name>/
-├── main.cpp
-│
-├── .clang-format
-│
-├── .gitignore
-│
-├── CMakeLists.txt
-│
-├── build/
-│
-├── include/
-│   └── <project_name>.h
-│
-├── src/
-│   └── <project_name>.cpp
-│
-└── tests/
-    ├── <project_name>_test.cpp
-    └── CMakeLists.txt
 ```
