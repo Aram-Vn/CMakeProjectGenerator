@@ -102,52 +102,57 @@ compile_commands.json
 cmake_minimum_required(VERSION 3.10)
 
 project("{self.project_name}")
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-file(GLOB_RECURSE SRC_FILES "src/*.cpp")
-file(GLOB_RECURSE HDR_FILES "src/*.h")
+file(GLOB_RECURSE SOURCE_FILES 
+    src/*.cpp
+)
 
-add_executable("{self.project_name}" main.cpp  ${{SRC_FILES}} ${{HDR_FILES}})
+file(GLOB_RECURSE HEADER_FILES 
+    include/*.h
+)
+
+add_executable(${{PROJECT_NAME}} main.cpp  ${{SOURCE_FILES}} ${{HEADER_FILES}})
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-target_include_directories("{self.project_name}" PRIVATE ${{CMAKE_CURRENT_SOURCE_DIR}}/include)
+target_include_directories(${{PROJECT_NAME}}
+    PRIVATE 
+        ${{CMAKE_CURRENT_SOURCE_DIR}}/include
+)
 
 include(CTest)
 add_subdirectory(tests)
 
-target_compile_options("{self.project_name}" PRIVATE 
+set(COMMON_COMPILE_OPTIONS
     -Wall
     -Wextra
     -Wshadow
     -Wswitch
     -pedantic
     -Wformat=2
-    -Wconversion
     -Wnull-dereference
     -Wunused-parameter
     -Wunreachable-code
     -Wimplicit-fallthrough
-    
+)
+
+set(COMMON_ERROR_OPTIONS
     -Werror
     -Werror=return-type
     -Werror=uninitialized
     -Werror=unused-result
     -Werror=strict-overflow
-
-    -fsanitize=address
-    -fsanitize=undefined
-
-    -fno-omit-frame-pointer
 )
 
-target_link_options("{self.project_name}" PRIVATE
-    -fsanitize=address
-    -fsanitize=undefined
+target_compile_options(${{PROJECT_NAME}} PRIVATE
+    ${{COMMON_COMPILE_OPTIONS}}
+    ${{COMMON_ERROR_OPTIONS}}
 )
-
-target_compile_features("{self.project_name}" PRIVATE cxx_std_20)
 
 # If not Visual Studio generator, copy compile_commands.json
 if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
