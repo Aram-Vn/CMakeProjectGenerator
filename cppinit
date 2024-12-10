@@ -312,6 +312,11 @@ def main(argv: list[str]) -> None:
     else:
         project_name = argv[1]
 
+    # Check if the directory already exists
+    if os.path.exists(project_name):
+        print(f"Error: Directory '{project_name}' already exists. Please choose a different name.")
+        return
+
     project_content = ProjectContent(project_name)
     os.makedirs(project_name)
 
