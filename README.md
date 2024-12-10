@@ -5,18 +5,17 @@ The CMake Project Generator is a Python script that automates the setup of C++ p
 - [Scripts](#scripts)
 - [Dependencies](#dependencies)
 - [Features](#features)
-- [Usage of cppinit](#usage-of-cppinit)
-  - [With Project Name Argument](#with-project-name-argument)
-  - [Without Project Name Argument](#without-project-name-argument)
-  - [Example](#example)
 - [Usage Adding to PATH](#adding-to-path)
   - [Steps](#steps)
   - [Using add_to_path.py After the First Run](#using-add_to_pathpy-after-the-first-run)
-
+- [Usage of cppinit](#cppinit)
+  - [With Project Name Argument](#with-project-name-argument)
+  - [Without Project Name Argument](#without-project-name-argument)
+  - [Example](#example)
 
 ## Scripts
 
-- [cppinit](#usage-of-cppinit): Generates the necessary files and directory structure for a new C++ project.
+- [cppinit](#cppinit): Generates the necessary files and directory structure for a new C++ project.
 - [add_to_path.py](#adding-to-path): Copies the CMakeProjectGenerator.py script to a ~/scripts directory and updates your PATH environment variable to include this directory, allowing you to run the script from anywhere.
 
 ## Dependencies
@@ -29,7 +28,53 @@ The CMake Project Generator is a Python script that automates the setup of C++ p
 - reates a main.cpp file, a header file, and a source file.
 - Configures .gitignore and .clang-format files for Git and code formatting.
 
-## Usage of cppinit
+## Adding to PATH
+
+The `add_to_path.py` script copies a specified script (for example cppinit) to the ~/scripts directory and adds this directory to your PATH environment variable, so you can execute the script from anywhere in the terminal.
+If this is the first run, the add_to_path.py script will also copy itself to the ~/scripts directory, removing the .py extension.
+
+### Steps
+
+if is first run
+
+1. Ensure both scripts are in the same directory.
+2. Run the add_to_path.py script with the name of the script you want to copy:
+
+```bash
+./add_to_path.py cppinit
+
+# or
+
+python add_to_path.py cppinit
+```
+
+This script will:
+
+- Copy `cppinit` to ~/scripts.
+- Check if ~/scripts is already in your PATH and add it to your .bashrc or .zshrc file if it is not.
+- Instruct you to source your shell configuration file to update the PATH in the current session.
+
+### Now you can run cppinit from any directory
+
+```bash
+cppinit <project_name>
+```
+
+## Using add_to_path.py After the First Run
+
+After the first run, the `add_to_path.py` script is copied to the ~/scripts directory without the .py extension, allowing you to call it from anywhere:
+
+```bash
+add_to_path <script_name>
+```
+
+For example, to copy another script from any directory named `new_script` to the ~/scripts directory, so you can use it from anywhere:
+
+```bash
+add_to_path new_script
+```
+
+## cppinit
 
 ### With Project Name Argument
 
@@ -89,50 +134,4 @@ Result Structure
 └── tests/
     ├── <project_name>_test.cpp
     └── CMakeLists.txt
-```
-
-## Adding to PATH
-
-The `add_to_path.py` script copies a specified script (for example cppinit) to the ~/scripts directory and adds this directory to your PATH environment variable, so you can execute the script from anywhere in the terminal. 
-If this is the first run, the add_to_path.py script will also copy itself to the ~/scripts directory, removing the .py extension.
-
-### Steps
-
-if is first run
-
-1. Ensure both scripts are in the same directory.
-2. Run the add_to_path.py script with the name of the script you want to copy:
-
-```bash
-./add_to_path.py cppinit
-
-# or
-
-python add_to_path.py cppinit
-```
-
-This script will:
-
-- Copy `cppinit` to ~/scripts.
-- Check if ~/scripts is already in your PATH and add it to your .bashrc or .zshrc file if it is not.
-- Instruct you to source your shell configuration file to update the PATH in the current session.
-
-### Now you can run cppinit from any directory:
-
-```bash
-cppinit <project_name>
-```
-
-## Using add_to_path.py After the First Run
-
-After the first run, the `add_to_path.py` script is copied to the ~/scripts directory without the .py extension, allowing you to call it from anywhere:
-
-```bash
-add_to_path <script_name>
-```
-
-For example, to copy another script from any directory named `new_script` to the ~/scripts directory, so you can use it from anywhere:
-
-```bash
-add_to_path new_script
 ```
