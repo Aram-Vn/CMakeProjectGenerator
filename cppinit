@@ -5,6 +5,7 @@ import subprocess
 from typing import List
 from typing import Dict
 import sys
+import shutil
 
 
 class ProjectContent:
@@ -25,8 +26,8 @@ int main()
 
     #________________________________-header_file-________________________________#
         self.header_file_content: str = f"""
-#ifndef {self.project_name.upper()}_INCLUDE_{self.project_name.upper()}_H
-#define {self.project_name.upper()}_INCLUDE_{self.project_name.upper()}_H
+#ifndef __{self.project_name.upper()}_INCLUDE_{self.project_name.upper()}_H__
+#define __{self.project_name.upper()}_INCLUDE_{self.project_name.upper()}_H__
 
 namespace my {{
     class {self.project_name} {{
@@ -37,7 +38,7 @@ namespace my {{
     }};
 }} // namespace my
 
-#endif // {self.project_name.upper()}_INCLUDE_{self.project_name.upper()}_H
+#endif // __{self.project_name.upper()}_INCLUDE_{self.project_name.upper()}_H__
         """
 
     #________________________________-src_file-________________________________#
@@ -53,7 +54,6 @@ namespace my {{
         self.git_ignore_content: str = """
 build/
 compile_commands.json
-.clang-format
 .vscode
 .cache
 
@@ -104,6 +104,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project("{self.project_name}")
 
+set(TARGET_NAME app_${{PROJECT_NAME}})
 set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -116,12 +117,13 @@ file(GLOB_RECURSE HEADER_FILES
     include/*.h
 )
 
-add_executable(${{PROJECT_NAME}} main.cpp  ${{SOURCE_FILES}} ${{HEADER_FILES}})
+add_executable(${{TARGET_NAME}} 
+    main.cpp  
+    ${{SOURCE_FILES}} 
+    ${{HEADER_FILES}}
+)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-target_include_directories(${{PROJECT_NAME}}
+target_include_directories(${{TARGET_NAME}}
     PRIVATE 
         ${{CMAKE_CURRENT_SOURCE_DIR}}/include
 )
@@ -150,10 +152,31 @@ set(COMMON_ERROR_OPTIONS
     -Werror=strict-overflow
 )
 
-target_compile_options(${{PROJECT_NAME}} PRIVATE
+set(SANITIZER_FLAGS
+    -fsanitize=undefined
+    -fsanitize=address
+    # -fsanitize=thread 
+    -fsanitize=address
+    -fno-omit-frame-pointer
+)
+
+target_compile_options(${{TARGET_NAME}} PRIVATE
     ${{COMMON_COMPILE_OPTIONS}}
     ${{COMMON_ERROR_OPTIONS}}
 )
+
+target_link_libraries(${{TARGET_NAME}} PRIVATE
+    ${{SANITIZER_FLAGS}}
+)
+
+#-----------------------------------------------------------------------#
+# if need to remove flags set lib as SYSTEM 
+# to suppress warnings in external headers
+#-----------------------------------------------------------------------#
+# Remove -pedantic from the target’s options 
+# get_target_property(target_options ${{TARGET_NAME}} COMPILE_OPTIONS)
+# list(REMOVE_ITEM target_options "-pedantic")
+# set_property(TARGET ${{TARGET_NAME}} PROPERTY COMPILE_OPTIONS ${{target_options}})
 
 # If not Visual Studio generator, copy compile_commands.json
 if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
@@ -361,8 +384,16 @@ def main(argv: list[str]) -> None:
 
     # Check if the directory already exists
     if os.path.exists(project_name):
-        print(f"Error: Directory '{project_name}' already exists. Please choose a different name.")
-        return
+        print(f"Error: Directory '{project_name}' already exists.")
+        print("Do you want to override? (y/Y/yes)")
+        response = input().strip().lower()
+
+        if response in {'y', 'yes'}:
+            print("Overriding the existing directory...")
+            shutil.rmtree(project_name)
+        else:
+            print("Operation aborted.")
+            return
 
     project_content = ProjectContent(project_name)
     os.makedirs(project_name)
