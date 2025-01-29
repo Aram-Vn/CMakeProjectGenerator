@@ -176,6 +176,7 @@ target_link_libraries(${{TARGET_NAME}} PRIVATE
 # Remove -pedantic from the target’s options 
 # get_target_property(target_options ${{TARGET_NAME}} COMPILE_OPTIONS)
 # list(REMOVE_ITEM target_options "-pedantic")
+# list(REMOVE_ITEM target_options "-Werror")
 # set_property(TARGET ${{TARGET_NAME}} PROPERTY COMPILE_OPTIONS ${{target_options}})
 
 # If not Visual Studio generator, copy compile_commands.json
