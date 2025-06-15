@@ -1,0 +1,46 @@
+
+Language: Cpp
+BasedOnStyle: Microsoft
+AlignTrailingComments: true
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterEnum: true
+    AfterStruct: true
+    AfterClass: true
+    AfterFunction: true
+    AfterUnion: true
+    AfterExternBlock: false
+    BeforeCatch: true
+    BeforeElse: true
+    BeforeLambdaBody: true
+    BeforeWhile: false
+    AfterNamespace: false
+    SplitEmptyFunction: true
+IndentWidth: 4
+KeepEmptyLinesAtTheStartOfBlocks: false
+PointerBindsToType: true
+SpacesBeforeTrailingComments: 1
+TabWidth: 4
+UseTab: Never
+IndentCaseLabels: true
+NamespaceIndentation: All
+AccessModifierOffset: -4
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveMacros:
+    Enabled: true
+    AcrossEmptyLines: true
+    AcrossComments: false
+AllowShortCaseLabelsOnASingleLine: true
+AlignEscapedNewlines: Right
+AllowShortBlocksOnASingleLine: Always
+AllowShortEnumsOnASingleLine: false
+AlignConsecutiveDeclarations: true
+AlwaysBreakTemplateDeclarations: true
+Cpp11BracedListStyle: false
+PackConstructorInitializers: Never
+AllowShortFunctionsOnASingleLine: Empty
+ReflowComments: true
+PenaltyBreakComment: 0
+PenaltyBreakOpenParenthesis: 1
+        
