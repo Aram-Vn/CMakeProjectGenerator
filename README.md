@@ -1,6 +1,6 @@
 # CMake Project Generator for C++
 
-The CMake Project Generator is a Python script that automates the setup of modern C++ projects with CMake. It provides a consistent folder structure, generates essential configuration files, and includes a lightweight header-only logger utility for immediate use in development and debugging.
+The CMake Project Generator is a Python script that automates the setup of C++ projects with CMake, providing a consistent project structure and basic configuration files.
 
 - [Scripts](#scripts)
 - [Dependencies](#dependencies)
@@ -12,7 +12,6 @@ The CMake Project Generator is a Python script that automates the setup of moder
   - [With Project Name Argument](#with-project-name-argument)
   - [Without Project Name Argument](#without-project-name-argument)
   - [Example](#example)
-  - [Logger](#logger)
 
 ## Scripts
 
@@ -25,12 +24,10 @@ The CMake Project Generator is a Python script that automates the setup of moder
 
 ## Features
 
-- Creates a modular folder structure: `src`, `include`, `tests`, and `logger`.
-- Generates `CMakeLists.txt` for root and test directories.
-- Creates default `main.cpp`, `.h`, and `.cpp` files for your project.
-- Includes a lightweight, header-only logger (`logger/logger.hpp`).
-- Sets up `.gitignore` and `.clang-format`.
-- Installs scripts globally via `~/scripts` and `PATH` integration.
+- Generates CMakeLists.txt for the project root and test directories.
+- reates a main.cpp file, a header file, and a source file.
+- Configures .gitignore and .clang-format files for Git and code formatting.
+- Integrates with your system for easy access from anywhere.
 
 ## Adding to PATH
 
@@ -129,10 +126,6 @@ Result Structure
 │
 ├── build/
 │
-├── logger
-│   ├── CMakeLists.txt
-│   └── logger.hpp
-│
 ├── include/
 │   └── <project_name>.h
 │
@@ -142,16 +135,7 @@ Result Structure
 └── tests/
     ├── <project_name>_test.cpp
     └── CMakeLists.txt
-
 ```
-
-## logger
-
-This project includes a lightweight, header-only logging utility located in the `logger/` directory.
-
-For full documentation, features, usage examples, and customization options, please visit the official repository:
-
-🔗 [one_header_logger on GitHub](https://github.com/Aram-Vn/one_header_logger)
 
 ## Example Workflow
 
