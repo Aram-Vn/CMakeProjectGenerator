@@ -241,6 +241,6 @@ cmake ..
 cmake --build .
 ```
 
---
+--- 
 
 With this setup, you can now generate either plain C++ projects (`cppinit`) or Qt Widgets projects (`qtinit`), both ready to build immediately.
