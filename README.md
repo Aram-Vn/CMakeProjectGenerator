@@ -1,6 +1,6 @@
-# CMake Project Generator for C++
+# CMake Project Generator for C++ and Qt
 
-The CMake Project Generator is a Python script that automates the setup of C++ projects with CMake, providing a consistent project structure and basic configuration files.
+The CMake Project Generator is a Python-based tool that automates the setup of C++ and Qt projects using CMake. It provides a consistent project structure and ready-to-use configuration files, letting you focus on coding instead of boilerplate setup.
 
 - [Scripts](#scripts)
 - [Dependencies](#dependencies)
@@ -12,6 +12,10 @@ The CMake Project Generator is a Python script that automates the setup of C++ p
   - [With Project Name Argument](#with-project-name-argument)
   - [Without Project Name Argument](#without-project-name-argument)
   - [Example](#example)
+- [qtinit](#qtinit)
+  - [With Project Name Argument](#qtinit-with-project-name-argument)
+  - [Without Project Name Argument](#qtinit-without-project-name-argument)
+  - [Example](#qtinit-example)
 
 ## Scripts
 
@@ -21,13 +25,17 @@ The CMake Project Generator is a Python script that automates the setup of C++ p
 ## Dependencies
 
 - Python 3.x
+- CMake 3.16+
+- A C++17 capable compiler
+ -For `qtinit`: Qt5 or Qt6 development packages (qtbase5-dev on Ubuntu, or Qt SDK installed manually)
 
 ## Features
 
 - Generates CMakeLists.txt for the project root and test directories.
 - reates a main.cpp file, a header file, and a source file.
 - Configures .gitignore and .clang-format files for Git and code formatting.
-- Integrates with your system for easy access from anywhere.
+- For Qt projects: sets up MainWindow.h/.cpp, QApplication, Q_OBJECT macro, and a build system ready for Qt5/Qt6.
+- ntegrates with your shell (`add_to_path.py`) so scripts can be run from anywhere.
 
 ## Adding to PATH
 
@@ -158,3 +166,81 @@ cd build
 cmake ..
 cmake --build .
 ```
+
+## qtinit
+
+### qtinit With Project Name Argument
+
+To use the cppinit, simply run the Python script with the project name as an argument:
+
+```bash
+./qtinit <project_name>
+
+# or 
+
+python qtinit <project_name>
+```
+
+### qtinit Without Project Name Argument
+
+or If you run the script without providing a project name as an argument, it will prompt you to enter the project name
+
+```bash
+./qtinit
+
+# or 
+
+python qtinit
+
+```
+
+You will then be prompted to enter the project name manually. After providing the project name, the script will proceed to create the project directory and files as usual.
+
+### qtinit Example
+
+```bash
+./qtinit
+Please enter project name:
+<project_name>
+```
+
+Result Structure
+
+```bash
+<project_name>/
+├── main.cpp
+├── .clang-format
+├── .gitignore
+├── CMakeLists.txt
+├── build/
+├── include/
+│   └── MainWindow.h
+└── src/
+    └── MainWindow.cpp
+```
+
+## qtinit Example Workflow
+
+1. Generate a project:
+
+```bash
+cppinit MyProject
+```
+
+2. Navigate to your project directory:
+
+```bash
+cd MyProject
+```
+
+3. Build the project:
+
+```bash
+cd build
+cmake ..
+cmake --build .
+```
+
+--
+
+With this setup, you can now generate either plain C++ projects (`cppinit`) or Qt Widgets projects (`qtinit`), both ready to build immediately.

@@ -1,0 +1,452 @@
+#!/usr/bin/env python3
+
+import os
+import subprocess
+from typing import List
+from typing import Dict
+import sys
+import shutil
+
+
+class ProjectContent:
+    def __init__(self, new_project_name: str):
+        self.project_name = new_project_name
+    #________________________________-main_cpp-________________________________#
+        self.main_cpp_content = """
+#include <MainWindow.h>
+
+#include <QApplication>
+
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+    return a.exec();
+}
+        """
+
+
+    #________________________________-header_file-________________________________#
+        self.header_file_content: str = f"""
+#ifndef __{self.project_name.upper()}_INCLUDE_MAIN_WINDOW_H__
+#define MAIN_WINDOW_H
+
+#include <QMainWindow>
+
+class MainWindow : public QMainWindow
+{{
+    Q_OBJECT
+
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+}};
+#endif // MAINWINDOW_H
+        """
+
+    #________________________________-src_file-________________________________#
+        self.src_file_content: str = f"""
+#include <MainWindow.h>
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+{{}}
+
+MainWindow::~MainWindow() {{}}
+        """
+
+    #________________________________-.git_ignore_content-________________________________#
+        self.git_ignore_content: str = """
+build/
+compile_commands.json
+.vscode
+.cache
+
+# Prerequisites
+*.d
+
+# C++ objects and libs
+*.slo
+*.lo
+*.o
+*.a
+*.la
+*.lai
+*.so
+*.so.*
+*.dll
+*.dylib
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+"""
+
+    #________________________________-.CMakeLists.txt__root-________________________________#
+        self.cmake_list_root: str = f"""
+cmake_minimum_required(VERSION 3.16)
+
+project("{self.project_name}" VERSION 0.1 LANGUAGES CXX)
+
+# -------------------- Flags --------------------
+set(COMMON_COMPILE_OPTIONS
+    -Wall
+    -Wextra
+    -Wshadow
+    -Wswitch
+    -pedantic
+    -Wformat=2
+    -Wnull-dereference
+    -Wunused-parameter
+    -Wunreachable-code
+    -Wimplicit-fallthrough
+)
+
+set(COMMON_ERROR_OPTIONS
+    -Werror
+    -Werror=return-type
+    -Werror=uninitialized
+    -Werror=unused-result
+    -Werror=strict-overflow
+)
+
+if(NOT WIN32)
+    set(SANITIZER_FLAGS
+        -fsanitize=undefined
+
+        # -fsanitize=address
+        -fno-omit-frame-pointer
+    )
+else()
+    set(SANITIZER_FLAGS "")
+endif()
+
+set(RELEASE_COMPILE_OPTIONS
+    -O3
+    -DNDEBUG
+)
+
+# -------------------- Global Settings --------------------
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(TARGET_NAME app_${{PROJECT_NAME}})
+set(RELEASE_TARGET_NAME app_${{PROJECT_NAME}}_fin)
+
+set(QT_LIBS
+    Qt${{QT_VERSION_MAJOR}}::Widgets
+    # your other qt libs
+)
+
+# Group source files by folder (for QtCreator & IDEs)
+source_group(TREE ${{CMAKE_SOURCE_DIR}}/src PREFIX "Source Files" FILES ${{SOURCE_FILES}})
+source_group(TREE ${{CMAKE_SOURCE_DIR}}/include PREFIX "Header Files" FILES ${{HEADER_FILES}})
+
+
+# -------------------- Qt --------------------
+find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Widgets DataVisualization Network)
+find_package(Qt${{QT_VERSION_MAJOR}} REQUIRED COMPONENTS Widgets DataVisualization Network)
+
+# -------------------- Sources --------------------
+## -------------------------------------------------#
+## if you have any resources uncomment
+## -------------------------------------------------#
+## -----------example of resources.qrc--------------#
+## -------------------------------------------------#
+## <!DOCTYPE RCC><RCC version="1.0">
+##     <qresource prefix="/">
+##         <file>resources/controlpanel.qss</file>
+##         <file>resources/icons8-hamburger-menu-100.png</file>
+##     </qresource>
+##</RCC>
+## -------------------------------------------------#
+## -------------------------------------------------#
+# set(RESOURCE_FILE resources.qrc)
+# qt_add_resources(RESOURCES ${{RESOURCE_FILE}})
+## -------------------------------------------------#
+
+file(GLOB_RECURSE HEADER_FILES
+    include/*
+)
+
+file(GLOB_RECURSE SOURCE_FILES
+    src/*
+)
+
+set(PROJECT_SOURCES
+    main.cpp
+    ${{HEADER_FILES}}
+    ${{SOURCE_FILES}}
+)
+
+# -------------------- Development Target --------------------
+if(${{QT_VERSION_MAJOR}} GREATER_EQUAL 6)
+    qt_add_executable(${{TARGET_NAME}}
+        MANUAL_FINALIZATION
+        ${{PROJECT_SOURCES}}
+        # ${{RESOURCES}} <<<-------------------------------  if you have any resources uncomment
+    )
+else()
+    if(ANDROID)
+        add_library(${{TARGET_NAME}} SHARED 
+            ${{PROJECT_SOURCES}} 
+            # ${{RESOURCES}} <<<-------------------------------  if you have any resources uncomment
+        )
+
+    else()
+        add_executable(${{TARGET_NAME}} 
+            ${{PROJECT_SOURCES}} 
+            # ${{RESOURCES}} <<<-------------------------------  if you have any resources uncomment
+        )
+    endif()
+endif()
+
+target_link_libraries(${{TARGET_NAME}} PRIVATE
+    ${{QT_LIBS}}
+    ${{SANITIZER_FLAGS}}
+)
+
+target_compile_options(${{TARGET_NAME}} PRIVATE
+    ${{COMMON_COMPILE_OPTIONS}}
+    ${{COMMON_ERROR_OPTIONS}}
+    ${{SANITIZER_FLAGS}}
+)
+
+target_include_directories(${{TARGET_NAME}} PRIVATE
+    ${{CMAKE_CURRENT_SOURCE_DIR}}/include
+)
+
+#-----------------------------------------------------------------------#
+# if need to remove flags set lib as SYSTEM 
+# to suppress warnings in external headers
+#-----------------------------------------------------------------------#
+#target_compile_options(${{TARGET_NAME}} PRIVATE
+#    "-isystem${{CMAKE_CURRENT_SOURCE_DIR}}/<lib_path>"
+#)
+
+set_target_properties(${{TARGET_NAME}} PROPERTIES
+    MACOSX_BUNDLE TRUE
+    WIN32_EXECUTABLE TRUE
+)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_executable(${{TARGET_NAME}})
+endif()
+
+install(TARGETS ${{TARGET_NAME}}
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${{CMAKE_INSTALL_LIBDIR}}
+    RUNTIME DESTINATION ${{CMAKE_INSTALL_BINDIR}}
+)
+
+# -------------------- Compile Commands Copy --------------------
+if(NOT CMAKE_GENERATOR MATCHES "Visual Studio")
+    add_custom_command(
+        OUTPUT ${{CMAKE_CURRENT_SOURCE_DIR}}/compile_commands.json
+        COMMAND ${{CMAKE_COMMAND}} -E copy ${{CMAKE_BINARY_DIR}}/compile_commands.json ${{CMAKE_CURRENT_SOURCE_DIR}}/compile_commands.json
+        DEPENDS ${{CMAKE_BINARY_DIR}}/compile_commands.json
+        COMMENT "Copying compile_commands.json..."
+    )
+
+    add_custom_target(copy_compile_commands ALL
+        DEPENDS ${{CMAKE_CURRENT_SOURCE_DIR}}/compile_commands.json
+    )
+endif()
+        """
+
+    #________________________________-.clang-format-________________________________#
+        self.clang_format_conten: str = """
+Language: Cpp
+BasedOnStyle: Microsoft
+AlignTrailingComments: true
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterEnum: true
+    AfterStruct: true
+    AfterClass: true
+    AfterFunction: true
+    AfterUnion: true
+    AfterExternBlock: false
+    BeforeCatch: true
+    BeforeElse: true
+    BeforeLambdaBody: true
+    BeforeWhile: false
+    AfterNamespace: false
+    SplitEmptyFunction: true
+IndentWidth: 4
+KeepEmptyLinesAtTheStartOfBlocks: false
+PointerBindsToType: true
+SpacesBeforeTrailingComments: 1
+TabWidth: 4
+UseTab: Never
+IndentCaseLabels: true
+NamespaceIndentation: All
+AccessModifierOffset: -4
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveMacros:
+    Enabled: true
+    AcrossEmptyLines: true
+    AcrossComments: false
+AllowShortCaseLabelsOnASingleLine: true
+AlignEscapedNewlines: Right
+AllowShortBlocksOnASingleLine: Always
+AllowShortEnumsOnASingleLine: false
+AlignConsecutiveDeclarations: true
+AlwaysBreakTemplateDeclarations: true
+Cpp11BracedListStyle: false
+PackConstructorInitializers: Never
+AllowShortFunctionsOnASingleLine: Empty
+ReflowComments: true
+PenaltyBreakComment: 0
+PenaltyBreakOpenParenthesis: 1
+        """
+
+def is_tool_installed(tool_name: str) -> bool:
+    """Check if a tool is installed on the system."""
+    try:
+        subprocess.run([tool_name, "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        return True
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return False
+
+def install_tool(tool_name: str):
+    """Attempt to install a tool using the appropriate package manager."""
+    try:
+        if sys.platform.startswith("linux"):
+            if os.path.exists("/usr/bin/pacman"):
+                print(f"Installing {tool_name} using pacman...")
+                subprocess.run(["sudo", "pacman", "-S", "--noconfirm", tool_name], check=True)
+            elif os.path.exists("/usr/bin/yay"):
+                print(f"Installing {tool_name} using yay...")
+                subprocess.run(["yay", "-S", "--noconfirm", tool_name], check=True)
+            elif os.path.exists("/usr/bin/apt-get"):
+                print(f"Installing {tool_name} using apt-get...")
+                subprocess.run(["sudo", "apt-get", "install", "-y", tool_name], check=True)
+            elif os.path.exists("/usr/bin/dnf"):
+                print(f"Installing {tool_name} using dnf...")
+                subprocess.run(["sudo", "dnf", "install", "-y", tool_name], check=True)
+            else:
+                print(f"Unknown package manager. Please install {tool_name} manually.")
+        elif sys.platform == "darwin":
+            print(f"Installing {tool_name} via Homebrew...")
+            subprocess.run(["brew", "install", tool_name], check=True)
+        elif sys.platform == "win32":
+            print(f"Please install {tool_name} manually on Windows.")
+        else:
+            print(f"Unsupported platform. Please install {tool_name} manually.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to install {tool_name}: {e}")
+
+def check_dependencies():
+    """Ensure all necessary tools are installed."""
+    tools = ["clang-format", "cmake", "make"]
+    for tool in tools:
+        if not is_tool_installed(tool):
+            print(f"{tool} is not installed.")
+            install_tool(tool)
+
+def write_file(file_path: str, content: str = "") -> None:
+    with open(file_path, "w", encoding="utf-8") as file:
+        file.write(content)
+
+def main(argv: list[str]) -> None:
+    print("[...] Checking dependencies...")
+    check_dependencies()
+    print("[V] Dependencies check finished.\n")
+    argc: int = len(argv)
+    project_name: str = ""
+
+    if argc != 2:
+        print("Please enter project name:")
+        project_name = input()
+    else:
+        project_name = argv[1]
+
+    # Check if the directory already exists
+    if os.path.exists(project_name):
+        print(f"Error: Directory '{project_name}' already exists.")
+        print("Do you want to override? (y/Y/yes)")
+        response = input().strip().lower()
+
+        if response in {'y', 'yes'}:
+            print("Overriding the existing directory...")
+            shutil.rmtree(project_name)
+        else:
+            print("Operation aborted.")
+            return
+
+    print(f"[...] Creating project directory: {project_name}")
+    project_content = ProjectContent(project_name)
+    os.makedirs(project_name)
+
+    # Dictionary of file paths and contents to be written
+    root_files: Dict[str, str] = {
+        os.path.join(project_name, "main.cpp"): project_content.main_cpp_content,          # root main
+        os.path.join(project_name, ".clang-format"): project_content.clang_format_conten,  # root clang-format
+        os.path.join(project_name, ".gitignore"): project_content.git_ignore_content,      # root .gitignore
+        os.path.join(project_name, "CMakeLists.txt"): project_content.cmake_list_root      # root CMakeLists
+    }
+
+    for file_path, content in root_files.items():
+        write_file(file_path, content)
+        print(f"    [V] Created {file_path}")
+
+     
+    # List of directories to create
+    directories: List[str] = [
+        os.path.join(project_name, "build"),
+        os.path.join(project_name, "src"),
+        os.path.join(project_name, "include"),
+    ]
+
+    for directory in directories:
+        os.makedirs(directory, exist_ok=True)
+        print(f"    [V] Created directory {directory}")
+
+    # Dictionary of additional files to be created
+    additional_files: Dict[str, str] = {
+        os.path.join(project_name, "src",  "MainWindow.cpp"): project_content.src_file_content,         # src/ dir c++ file
+        os.path.join(project_name, "include",  "MainWindow.h"): project_content.header_file_content,    # include/ dir header file
+    }    
+
+    for file_path, content in additional_files.items():
+        write_file(file_path, content)
+        print(f"    [V] Created {file_path}")
+
+    print("\n[V] Project initialized successfully!")
+    print(f"   Next steps:\n"
+          f"   cd {project_name}\n"
+          f"   cd build\n"
+          f"   cmake .. && cmake --build . -j\n"
+          f"   ./app_{project_name}")
+
+if __name__ == '__main__':
+    main(sys.argv)
